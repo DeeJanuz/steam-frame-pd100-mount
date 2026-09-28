@@ -11,6 +11,13 @@
 
 Side views with the head to the right. The pod is gray, the arms are blue, the mount is orange, and the PD100 is shown as a yellow block.
 
+## What you need
+
+- A Valve Steam Frame.
+- A [BoboVR PD100 charging dock](https://www.amazon.com/dp/B0FLXQMPCS). This listing is the dock only, without a battery.
+- A B100-style battery for the dock, such as this [DMMNS 10000 mAh two-pack](https://www.amazon.com/dp/B0FHK169RV), which is sold as a replacement for the BoboVR B100.
+- 3M Command strips to hold the PD100 on the mount.
+
 ## Parts
 
 ![The four printable parts](images/parts.png)
