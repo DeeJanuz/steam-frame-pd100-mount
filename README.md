@@ -33,8 +33,6 @@ Print both arms and whichever mounts you want. The same arms work with either mo
 
 ## Assembly
 
-![Under setup from behind](images/under_back.png)
-
 ### Under setup
 
 1. Clip the arms onto the pod's outer shell with the rails facing out and on the lower half of the pod. Center each arm about 18 mm to the left or right of the pod's center. Each arm hooks over the top and bottom edges and catches behind the small ledge where the pod's outer shell meets the part that faces your head. The arms flex slightly to snap on.
