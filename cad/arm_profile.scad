@@ -1,7 +1,9 @@
 // Cross-section of the arms, in the (Y, Z) plane; see pod_dims.scad.
 // Each arm wraps the whole pod: a thin spine lies on the head-side face, bars
-// cross the top and bottom edges, and short lips reach over the outer face.
-// Each bar steps down behind the outer shell's rim to fill the ledge at the seam.
+// cross the top and bottom edges, and lips reach over the outer face. The bar
+// that carries the rail has a long lip, hooked on first; the other bar has a
+// short lip that snaps on last. Each bar steps down behind the outer shell's
+// rim to fill the ledge at the seam.
 //
 // As printed, the spine bows toward the pod, which splays the bars open so
 // the lips pass over the pod's edges. On the pod, the head-side face presses
@@ -9,13 +11,17 @@
 // outer face, so the arm does not rattle.
 include <pod_dims.scad>
 
+rim_clearance = -1.2;   // room between each bar and the pod's edge; negative squeezes the pod
+                        // (0 fit snugly as fit clip A on the earlier outside arms)
 spine_gap     = 0.2;    // spine to the head-side face, once pressed flat
-spine_thick   = 2.0;
-spine_bow     = 3.0;    // as printed, how far the spine bows toward the pod at mid-height
+spine_thick   = 1.65;
+spine_bow     = 3.6;    // as printed, how far the spine bows toward the pod at mid-height
 bar_thick     = 3.0;    // over the outer shell's rim
-lip_thick     = 1.6;
-lip_len       = 4.0;    // how far each lip reaches down the outer face
-lip_ramp      = 1.0;    // lead-in at each lip's tip
+// Lips: [long lip on the rail's bar, short lip on the other bar].
+lip_len       = [7.5, 3.8];   // how far each lip reaches down the outer face
+lip_root      = [1.4, 1.1];   // thickness where each lip meets its bar
+lip_tip       = [0.7, 1.1];   // thickness at each lip's tip
+lip_lean      = [1.0, 0];     // how far each tip leans out from the outer face
 step_gap_y    = 0.35;   // a bar's step to the back of the outer shell
 step_gap_z    = 0.25;   // a bar to the top of the head-side part
 inner_chamfer = 1.0;    // inside corner where the spine meets a bar
@@ -23,40 +29,37 @@ edge_chamfer  = 1.0;    // outside corners
 
 // Underside of a bar over the outer shell, for a given rim clearance.
 function z_bar(clearance) = shell_height / 2 + clearance;
-// Outer face, modeled as a parabola from the edges (Y = 0) to the bulge at mid-height.
-function outer_y(z) = -outer_bulge * (1 - pow(z / (shell_height / 2), 2));
 
 y_spine_in  = total_thick_edge + spine_gap;
 y_spine_out = y_spine_in + spine_thick;
 y_step      = max(shell_thick_top, shell_thick_bottom) + step_gap_y;
-z_head      = head_part_height / 2 + step_gap_z;
+z_head      = head_part_height / 2 + step_gap_z + rim_clearance;
 
 // Where the spine meets a bar. With the spine bowed, each bar turns about this
 // point by bow_angle, the slope at the end of the bowed spine.
 pivot = [y_spine_in + spine_thick / 2, z_head - inner_chamfer];
 function bow_angle(bow) = atan(2 * bow / pivot[1]);
 
-// Back of a lip at its tip, with the spine flat. The lips lean out to follow
-// the bulge, so this is the rearmost point of an arm.
-function lip_back_y(clearance) = outer_y(z_bar(clearance) - lip_len) - lip_thick;
+// Rearmost point of an arm, with the spine flat: the back of a lip at its root
+// or its leaning tip.
+lip_back_y = min([for (i = [0, 1]) min(-lip_root[i], -lip_lean[i] - lip_tip[i])]);
 
-// Top bar and lip with the spine flat, from the pivot's height up.
-module bar_2d(clearance) {
+// Upper bar and lip with the spine flat, from the pivot's height up. i = 0
+// gives the long lip, i = 1 the short one.
+module bar_2d(clearance, i) {
     zr = z_bar(clearance);
     zt = zr + bar_thick;
-    z_tip = zr - lip_len;
-    y_tip = outer_y(z_tip);
+    z_tip = zr - lip_len[i];
     polygon([[y_spine_in, pivot[1] - 0.3],
              [y_spine_in, z_head - inner_chamfer],
              [y_spine_in - inner_chamfer, z_head],
              [y_step, z_head],
              [y_step, zr],
              [0, zr],
-             [y_tip, z_tip + lip_ramp],
-             [y_tip - lip_ramp, z_tip],
-             [y_tip - lip_thick, z_tip],
-             [-lip_thick, zt - edge_chamfer],
-             [-lip_thick + edge_chamfer, zt],
+             [-lip_lean[i], z_tip],
+             [-lip_lean[i] - lip_tip[i], z_tip],
+             [-lip_root[i], zt - edge_chamfer],
+             [-lip_root[i] + edge_chamfer, zt],
              [y_spine_out - edge_chamfer, zt],
              [y_spine_out, zt - edge_chamfer],
              [y_spine_out, pivot[1] - 0.3]]);
@@ -80,15 +83,15 @@ module turn_bar(bow) {
     translate(pivot) rotate(-bow_angle(bow)) translate(-pivot) children();
 }
 
-// Top half. The bottom half is this mirrored.
-module arm_half_2d(clearance, bow) {
+// Upper half, with lip i. The lower half is the same shape mirrored.
+module arm_half_2d(clearance, bow, i) {
     spine_half_2d(bow);
-    turn_bar(bow) bar_2d(clearance);
+    turn_bar(bow) bar_2d(clearance, i);
 }
 
-// An arm's cross-section: bowed as printed (bow = spine_bow), or pressed flat
-// on the pod (bow = 0).
+// An arm's cross-section with the long lip on top: bowed as printed
+// (bow = spine_bow), or pressed flat on the pod (bow = 0).
 module arm_2d(clearance, bow) {
-    arm_half_2d(clearance, bow);
-    mirror([0, 1]) arm_half_2d(clearance, bow);
+    arm_half_2d(clearance, bow, 0);
+    mirror([0, 1]) arm_half_2d(clearance, bow, 1);
 }

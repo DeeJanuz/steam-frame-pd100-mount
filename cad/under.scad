@@ -29,7 +29,7 @@ function face_at(z) = face_ref + (face_ref[1] - z) / cos(under_tilt) * u_dir;
 // The PD100 sits on the face as high as it can while its front corner stays
 // corner_below under the pod.
 pd_corner = face_at(-shell_height / 2 - corner_below) - pd_up * u_dir;   // its upper end
-y_wedge   = min(lip_back_y(c), -outer_bulge) - pod_gap;                 // upper part's side facing the pod
+y_wedge   = min(lip_back_y, -outer_bulge) - pod_gap;                    // upper part's side facing the pod
 
 // Side profile: the groove block under the pod, and a triangle above it that
 // carries the face up behind the pod. The triangle is hollowed into a truss.

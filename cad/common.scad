@@ -9,7 +9,6 @@ print    = false;      // true: lay the chosen part on its side for printing
 pod_view = pod_width;  // assembly views: how much of the pod's width to draw
 
 curve_radius  = 117.5;  // pod's curve seen from above (between the R110 and R125 test gauges)
-rim_clearance = 0.0;    // fit clip A: no extra room over the outer shell's rim
 
 // BoboVR PD100 combo (dock + B100 battery), from the Amazon listing.
 pd_across = 113;  // left to right, same direction as the pod
@@ -38,7 +37,7 @@ function arm_x_lo(side) = side * arm_offset - arm_width / 2;
 // between their rear edge at the arms' outer ends and their front edge at the
 // inner ends.
 function swept_y(y, x) = curve_radius - sqrt((curve_radius - y) ^ 2 - x ^ 2);
-bar_rear  = swept_y(-lip_thick + edge_chamfer, arm_offset + arm_width / 2);
+bar_rear  = swept_y(-lip_root[0] + edge_chamfer, arm_offset + arm_width / 2);
 bar_front = swept_y(y_spine_out - edge_chamfer, arm_offset - arm_width / 2);
 rail_y    = (bar_rear + bar_front) / 2;
 assert(bar_front - bar_rear >= dt_root, "rail base overhangs the curved bars; narrow the arms");
