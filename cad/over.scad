@@ -1,18 +1,18 @@
-// Over mount: the PD100 lies over the top of the pod. The clip is worn rail up,
-// so its rail runs along the pod's top edge.
-//   over_mount - slides onto the rail from one side and carries a 40 mm
+// Over mount: the PD100 lies over the top of the pod. The arms are worn rail up,
+// so their rails run along the pod's top edge.
+//   over_mount - slides onto both rails from one side and carries a 40 mm
 //       platform that rises toward the face.
 // Meant for relaxed use, so it sticks out behind the head as little as
 // possible: a 60 degree platform lays the PD100 over the top so its thickness
 // points up rather than back, and the platform starts right at the back of the
-// clip. Axes as in pod_dims.scad.
+// arms. Axes as in pod_dims.scad.
 include <common.scad>
 
 part = "over_assembly";  // over_assembly, over_mount
 
 over_tilt    = 60;   // platform angle from vertical, upper end toward the face
 platform_len = 40;   // flat platform, from its back end to the tip
-back_reach   = 0;    // extends the platform back past the clip, along the platform;
+back_reach   = 0;    // extends the platform back past the arms, along the platform;
                      // raise it to move the PD100 back and down, away from the head
 brace_drop   = 10;   // how far the brace under the platform reaches down the mount's front
 
@@ -20,7 +20,7 @@ o_dir = [sin(over_tilt), cos(over_tilt)];    // up the platform, toward the face
 o_in  = [cos(over_tilt), -sin(over_tilt)];   // into the mount, toward the pod
 o_out = -o_in;                               // out of the platform, PD100 side
 
-zb    = z_top;                     // rail's base, on the clip's top bar
+zb    = z_top;                     // rails' base, on the arms' top bars
 z_tip = zb + dt_height + dt_gap;   // groove's ceiling
 
 // The platform keeps mount_wall of material over the groove's rear corner and
@@ -35,7 +35,7 @@ under_back = pd_low + plate_thick * o_in;       // underside at the back end, wh
 z_under = tip_bottom[1] - (tip_bottom[0] - y_front_tip) / tan(over_tilt);  // platform underside above the mount's front
 z_brace = max(z_tip, z_under - brace_drop);
 
-// Side profile: the groove block on the clip, and the platform with a brace
+// Side profile: the groove block on the arms, and the platform with a brace
 // under it. The part above the groove is hollowed into a truss.
 module over_mount_2d() {
     front = z_brace > z_tip + 0.01 ? [[y_front_tip, z_tip], [y_front_tip, z_brace], tip_bottom]
@@ -57,7 +57,7 @@ module over_pd100() {
 if (part == "over_mount") on_side(-mount_width / 2) over_mount();
 if (part == "over_assembly") {
     color("dimgray") pod();
-    color("steelblue") clip();
+    color("steelblue") arms();
     color("darkorange") translate([explode, 0, 0]) over_mount();
     color("gold", 0.35) translate([explode, 0, 0]) over_pd100();
 }

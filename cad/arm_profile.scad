@@ -1,12 +1,12 @@
-// Cross-section of the clip, in the (Y, Z) plane; see pod_dims.scad.
-// The clip wraps the whole pod: a thin spine lies on the head-side face, bars
+// Cross-section of the arms, in the (Y, Z) plane; see pod_dims.scad.
+// Each arm wraps the whole pod: a thin spine lies on the head-side face, bars
 // cross the top and bottom edges, and short lips reach over the outer face.
 // Each bar steps down behind the outer shell's rim to fill the ledge at the seam.
 //
 // As printed, the spine bows toward the pod, which splays the bars open so
 // the lips pass over the pod's edges. On the pod, the head-side face presses
 // the spine flat. That closes the bars and keeps the lips pressed on the
-// outer face, so the clip does not rattle.
+// outer face, so the arm does not rattle.
 include <pod_dims.scad>
 
 spine_gap     = 0.2;    // spine to the head-side face, once pressed flat
@@ -37,7 +37,7 @@ pivot = [y_spine_in + spine_thick / 2, z_head - inner_chamfer];
 function bow_angle(bow) = atan(2 * bow / pivot[1]);
 
 // Back of a lip at its tip, with the spine flat. The lips lean out to follow
-// the bulge, so this is the rearmost point of the clip.
+// the bulge, so this is the rearmost point of an arm.
 function lip_back_y(clearance) = outer_y(z_bar(clearance) - lip_len) - lip_thick;
 
 // Top bar and lip with the spine flat, from the pivot's height up.
@@ -81,14 +81,14 @@ module turn_bar(bow) {
 }
 
 // Top half. The bottom half is this mirrored.
-module clip_half_2d(clearance, bow) {
+module arm_half_2d(clearance, bow) {
     spine_half_2d(bow);
     turn_bar(bow) bar_2d(clearance);
 }
 
-// The clip's cross-section: bowed as printed (bow = spine_bow), or pressed flat
+// An arm's cross-section: bowed as printed (bow = spine_bow), or pressed flat
 // on the pod (bow = 0).
-module clip_2d(clearance, bow) {
-    clip_half_2d(clearance, bow);
-    mirror([0, 1]) clip_half_2d(clearance, bow);
+module arm_2d(clearance, bow) {
+    arm_half_2d(clearance, bow);
+    mirror([0, 1]) arm_half_2d(clearance, bow);
 }

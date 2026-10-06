@@ -1,7 +1,7 @@
 // Shared settings and helpers for the Steam Frame PD100 mounts.
 // Every part prints on its side, so the layers lie in the plane that carries
-// the PD100's weight and the clip's flex. Axes as in pod_dims.scad.
-include <clip_profile.scad>
+// the PD100's weight and the arms' flex. Axes as in pod_dims.scad.
+include <arm_profile.scad>
 
 part     = "none";
 explode  = 0;          // assembly views: slide the mount out along X
@@ -16,8 +16,9 @@ pd_across = 113;  // left to right, same direction as the pod
 pd_up     = 75;   // along the mount's face
 pd_thick  = 35;
 
-clip_width  = 50;     // across the pod, centered on it
 mount_width = 55;
+arm_width   = 15;
+arm_offset  = mount_width / 2 - arm_width / 2 - 2;  // arms sit just inside the mount's ends
 mount_wall  = 3;      // material around the groove in a mount
 plate_thick = 3;      // platform thickness at its tip
 
@@ -28,16 +29,19 @@ dt_gap     = 0.05;    // clearance per face in a mount's groove; starts tight, o
 dt_lead_in = 2;       // groove flares open over this length at each end of a mount
 
 c     = rim_clearance;
-z_top = z_bar(c) + bar_thick;   // top of the clip's top bar, where the rail starts
+z_top = z_bar(c) + bar_thick;   // top of the arms' top bars, where the rails start
 
-// The rail runs straight along the pod's width while the bar curves away from
-// it toward the clip's ends. Center the rail's base on the flat top of the bar,
-// between its rear edge at the ends and its front edge in the middle.
+function arm_x_lo(side) = side * arm_offset - arm_width / 2;
+
+// Each rail runs straight along the pod's width while its arm's bar curves away
+// from it. Both rails share one line, centered on the flat top of the bars,
+// between their rear edge at the arms' outer ends and their front edge at the
+// inner ends.
 function swept_y(y, x) = curve_radius - sqrt((curve_radius - y) ^ 2 - x ^ 2);
-bar_rear  = swept_y(-lip_thick + edge_chamfer, clip_width / 2);
-bar_front = y_spine_out - edge_chamfer;
+bar_rear  = swept_y(-lip_thick + edge_chamfer, arm_offset + arm_width / 2);
+bar_front = swept_y(y_spine_out - edge_chamfer, arm_offset - arm_width / 2);
 rail_y    = (bar_rear + bar_front) / 2;
-assert(bar_front - bar_rear >= dt_root, "rail base overhangs the curved bar; narrow the clip");
+assert(bar_front - bar_rear >= dt_root, "rail base overhangs the curved bars; narrow the arms");
 
 // The groove's outer wall leans with the dovetail's flank.
 flank_dy = (dt_tip - dt_root) / 2;
@@ -65,7 +69,7 @@ module swept(x_lo, x_hi) {
 }
 
 // Male dovetail with its base on the X axis, pointing +Y. The base runs 1 mm
-// below the axis so it stays buried in the clip's bar when the bar turns.
+// below the axis so it stays buried in an arm's bar when the bar turns.
 module rail_2d() {
     polygon([[-dt_root / 2, -1], [dt_root / 2, -1],
              [dt_tip / 2, dt_height], [-dt_tip / 2, dt_height]]);
@@ -82,18 +86,24 @@ module at(q, dir) {
     translate(q) rotate(atan2(dir[1], dir[0]) - 90) children();
 }
 
-// The clip, worn rail up: wraps the pod and carries a dovetail rail along the
-// top bar. Worn upside down, the rail runs under the pod. bow = spine_bow gives
-// the shape as printed; bow = 0 gives the shape on the pod.
-module clip(bow = 0) {
-    swept(-clip_width / 2, clip_width / 2) clip_2d(c, bow);
-    // The rail turns with the top bar, about the pivot at the clip's center.
-    translate([0, pivot[0], pivot[1]]) rotate([-bow_angle(bow), 0, 0]) translate([0, -pivot[0], -pivot[1]])
-        extrude_x(clip_width) at([rail_y, z_top], [0, 1]) rail_2d();
+// One arm, worn rail up: wraps the pod and carries a dovetail rail along its
+// top bar. side = -1 is the left arm, 1 the right. Worn upside down, an arm
+// moves to the other side and its rail runs under the pod. bow = spine_bow
+// gives the shape as printed; bow = 0 gives the shape on the pod.
+module arm(side, bow = 0) {
+    x_lo = arm_x_lo(side);
+    swept(x_lo, x_lo + arm_width) arm_2d(c, bow);
+    // The rail turns with the top bar, about the pivot at the arm's middle.
+    p = [swept_y(pivot[0], side * arm_offset), pivot[1]];
+    translate([side * arm_offset, p[0], p[1]]) rotate([-bow_angle(bow), 0, 0]) translate([0, -p[0], -p[1]])
+        extrude_x(arm_width) at([rail_y, z_top], [0, 1]) rail_2d();
 }
 
-// Extrude a mount's (Y, Z) profile along X and cut the groove for the clip's
-// rail, whose base is at height zb and which points up (s = 1) or down (s = -1).
+// Both arms, worn rail up.
+module arms(bow = 0) { for (side = [-1, 1]) arm(side, bow); }
+
+// Extrude a mount's (Y, Z) profile along X and cut the groove for the arms'
+// rails, whose base is at height zb and which point up (s = 1) or down (s = -1).
 // The groove flares at both ends so the tight fit starts onto the rail easily.
 module mount_body(zb, s) {
     difference() {

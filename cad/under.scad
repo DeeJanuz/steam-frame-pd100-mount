@@ -1,7 +1,7 @@
 // Under mount: the PD100 hangs below and behind the Steam Frame's battery pod.
 // Best for fast-paced games, since there is less movement low on the head.
-// The clip is worn upside down, so its rail runs along the pod's bottom edge.
-//   under_mount - slides onto the rail from one side. Its angled face carries
+// The arms are worn upside down, so their rails run along the pod's bottom edge.
+//   under_mount - slides onto both rails from one side. Its angled face carries
 //       the PD100 with the display edge facing up, and its upper part sits just
 //       behind the pod's outer face.
 // The face passes as close to the pod as the groove allows. Two numbers set
@@ -13,12 +13,12 @@ part = "under_assembly";  // under_assembly, under_mount
 
 under_tilt   = 30;   // PD100 lean from vertical, lower edge toward the neck
 corner_below = 25;   // PD100's lowest front corner, mm below the pod's bottom edge
-pod_gap      = 0.3;  // mount to the clip's lips and the pod's outer face
+pod_gap      = 0.3;  // mount to the arms' lips and the pod's outer face
 
 u_dir = [sin(under_tilt), -cos(under_tilt)];   // down the mount's face, toward the neck
 u_out = [-cos(under_tilt), -sin(under_tilt)];  // out of the face, PD100 side
 
-zb      = -z_top;                    // rail's base, under the clip's bottom bar
+zb      = -z_top;                    // rails' base, under the arms' bottom bars
 z_tip   = zb - dt_height - dt_gap;   // groove's floor
 z_floor = z_tip - mount_wall;        // bottom of the mount
 
@@ -57,7 +57,7 @@ module under_pd100() {
 if (part == "under_mount") on_side(-mount_width / 2) under_mount();
 if (part == "under_assembly") {
     color("dimgray") pod();
-    color("steelblue") mirror([0, 0, 1]) clip();
+    color("steelblue") mirror([0, 0, 1]) arms();
     color("darkorange") translate([explode, 0, 0]) under_mount();
     color("gold", 0.35) translate([explode, 0, 0]) under_pd100();
 }
