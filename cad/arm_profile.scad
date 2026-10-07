@@ -11,14 +11,16 @@
 // outer face, so the arm does not rattle.
 include <pod_dims.scad>
 
-rim_clearance = -1.2;   // room between each bar and the pod's edge; negative squeezes the pod
-                        // (0 fit snugly as fit clip A on the earlier outside arms)
-spine_gap     = 0.2;    // spine to the head-side face, once pressed flat
+rim_clearance = -2.2;   // room between each bar and the pod's edge; negative squeezes the pod
+                        // (test prints: -2.2 fits well, -1.2 was loose)
+fit_offset    = 0;      // test arms: changes the height between the bars by this much, split
+                        // between the two bars; negative is tighter. Engraved on the rail.
+spine_gap    = 0.2;    // spine to the head-side face, once pressed flat
 spine_thick   = 1.65;
 spine_bow     = 3.6;    // as printed, how far the spine bows toward the pod at mid-height
 bar_thick     = 3.0;    // over the outer shell's rim
 // Lips: [long lip on the rail's bar, short lip on the other bar].
-lip_len       = [7.5, 3.8];   // how far each lip reaches down the outer face
+lip_len       = [7.5, 5.0];   // how far each lip reaches down the outer face
 lip_root      = [1.4, 1.1];   // thickness where each lip meets its bar
 lip_tip       = [0.7, 1.1];   // thickness at each lip's tip
 lip_lean      = [1.0, 0];     // how far each tip leans out from the outer face
@@ -27,13 +29,16 @@ step_gap_z    = 0.25;   // a bar to the top of the head-side part
 inner_chamfer = 1.0;    // inside corner where the spine meets a bar
 edge_chamfer  = 1.0;    // outside corners
 
+// Clearance used for each bar, with a test arm's offset split between them.
+bar_clearance = rim_clearance + fit_offset / 2;
+
 // Underside of a bar over the outer shell, for a given rim clearance.
 function z_bar(clearance) = shell_height / 2 + clearance;
 
 y_spine_in  = total_thick_edge + spine_gap;
 y_spine_out = y_spine_in + spine_thick;
 y_step      = max(shell_thick_top, shell_thick_bottom) + step_gap_y;
-z_head      = head_part_height / 2 + step_gap_z + rim_clearance;
+z_head      = head_part_height / 2 + step_gap_z + bar_clearance;
 
 // Where the spine meets a bar. With the spine bowed, each bar turns about this
 // point by bow_angle, the slope at the end of the bowed spine.

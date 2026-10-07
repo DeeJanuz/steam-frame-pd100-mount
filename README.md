@@ -13,7 +13,7 @@ Sections through one arm, with the head to the right. The pod is gray, the arm i
 
 ## How the arms work
 
-Each arm wraps the whole pod. A 1.65 mm spine lies flat against the side of the pod that faces your head. Bars cross the pod's top and bottom edges, and a lip on each bar reaches over the pod's outer shell: a 7.5 mm lip on the bar that carries the rail, and a 3.8 mm lip on the other bar. Only the lips sit on the back of the pod, reaching at most 1.7 mm behind it, and the mount rides on dovetail rails along the pod's top or bottom edge.
+Each arm wraps the whole pod. A 1.65 mm spine lies flat against the side of the pod that faces your head. Bars cross the pod's top and bottom edges, and a lip on each bar reaches over the pod's outer shell: a 7.5 mm lip on the bar that carries the rail, and a 5.0 mm lip on the other bar. Only the lips sit on the back of the pod, reaching at most 1.7 mm behind it, and the mount rides on dovetail rails along the pod's top or bottom edge.
 
 Each arm is printed with its spine bowed slightly toward the pod, which spreads the bars apart so the lips can pass over the pod's edges. Once the arm is on, the pod presses the spine flat. That pulls the bars closed and holds the lips against the outer shell, so the arm stays tight without rattling.
 
@@ -42,7 +42,7 @@ Print both arms and whichever mounts you want. The same arms work with either mo
 - The STL files are already oriented. Every part prints on its side with no supports, so the layers run in the direction that carries the battery's weight and the arms' flex.
 - PETG is recommended. PLA can soften over time from body heat and a warm battery, and each arm's spine stays slightly bent while it is on the pod.
 - The arms print 15 mm tall and the mounts print 55 mm tall.
-- As solid plastic, each arm is about 4.8 cm³, the under mount about 24 cm³, and the over mount about 14 cm³. Your slicer will report the actual weight for your infill.
+- As solid plastic, each arm is about 4.7 cm³, the under mount about 23 cm³, and the over mount about 14 cm³. Your slicer will report the actual weight for your infill.
 - Consider printing one arm first to check the fit before printing the rest.
 
 ## Assembly
@@ -72,7 +72,7 @@ The dovetail fit is tight on purpose so the mount stays put by friction. If a mo
 
 ## Fit and customizing
 
-The pod measurements come from calipers on one Steam Frame and were checked with test prints of an earlier arm design that clipped onto the outside of the pod. The wrap-around arms use the same measurements, but each bar is set 1.2 mm into the pod's edge so the arms squeeze the pod. That squeeze, the fit on the side of the pod that faces your head, the spine's bow, and the lips have not been checked with a print yet. If an arm is too tight to fit, raise `rim_clearance` toward 0. The main numbers:
+The pod measurements come from calipers on one Steam Frame. The arms' size was set with test prints: with each bar set 2.2 mm into the pod's edge on paper, the arms fit well, while 1.2 mm left them loose. If your arms are loose or too tight, change `rim_clearance` (a 1 mm change per bar changes the height between the bars by 2 mm). The short lip was then lengthened from 3.8 to 5.0 mm because the arms slipped off too easily. That longer lip has not been printed yet. The main numbers:
 
 - The pod's outer shell is 87.0 mm tall at the seam, and the part that faces your head is 84.5 mm tall.
 - The pod is 12.0 mm thick at the middle of its top and bottom edges, and the outer shell is about 6.5 mm of that.
@@ -87,9 +87,10 @@ The design is written in OpenSCAD. Settings you are most likely to change:
 | `cad/common.scad` | `curve_radius` | Curve of the pod seen from above |
 | `cad/common.scad` | `dt_gap` | Dovetail clearance per face |
 | `cad/common.scad` | `mount_width`, `arm_width`, `arm_offset` | Mount width, arm width, and arm spacing |
-| `cad/arm_profile.scad` | `rim_clearance` | Room between each bar and the pod's edge. Negative values squeeze the pod (-1.2 mm by default). 0 fit snugly on the earlier outside arms. |
+| `cad/arm_profile.scad` | `rim_clearance` | Room between each bar and the pod's edge. Negative values squeeze the pod (-2.2 mm by default, which fit well in test prints). |
+| `cad/arm_profile.scad` | `fit_offset` | For test arms: changes the height between an arm's bars by this many mm, split between the two bars. Negative is tighter. A nonzero value is engraved on top of the rail. |
 | `cad/arm_profile.scad` | `spine_bow` | How far the spine bows toward the pod as printed (3.6 mm by default). More bow makes the arms easier to fit and grip harder. |
-| `cad/arm_profile.scad` | `lip_len` | How far the long and short lips reach over the outer shell (7.5 and 3.8 mm by default) |
+| `cad/arm_profile.scad` | `lip_len` | How far the long and short lips reach over the outer shell (7.5 and 5.0 mm by default) |
 | `cad/arm_profile.scad` | `lip_root`, `lip_tip`, `lip_lean` | Each lip's thickness at its root and tip, and how far its tip leans out |
 | `cad/arm_profile.scad` | `spine_thick`, `spine_gap` | Spine thickness (1.65 mm by default), and its clearance to the pod once flat |
 | `cad/under.scad` | `under_tilt` | Angle of the under mount's face, from vertical (30 by default) |
@@ -107,6 +108,12 @@ openscad -D 'part="arm_left"'    -D print=true -o stl/arm_left.stl    cad/arms.s
 openscad -D 'part="arm_right"'   -D print=true -o stl/arm_right.stl   cad/arms.scad
 openscad -D 'part="under_mount"' -D print=true -o stl/under_mount.stl cad/under.scad
 openscad -D 'part="over_mount"'  -D print=true -o stl/over_mount.stl  cad/over.scad
+```
+
+To build test arms in other sizes, add a fit offset, for example:
+
+```sh
+openscad -D 'part="arm_left"' -D print=true -D fit_offset=-2 -o stl/arm_left_fit-2.stl cad/arms.scad
 ```
 
 Opening `cad/under.scad` or `cad/over.scad` in OpenSCAD without any settings shows the assembly with the pod and a block the size of the PD100. Opening `cad/arms.scad` shows the arms on the pod next to the arms as printed.

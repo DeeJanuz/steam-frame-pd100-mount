@@ -27,7 +27,7 @@ dt_height  = 5;
 dt_gap     = 0.05;    // clearance per face in a mount's groove; starts tight, open up if needed
 dt_lead_in = 2;       // groove flares open over this length at each end of a mount
 
-c     = rim_clearance;
+c     = bar_clearance;
 z_top = z_bar(c) + bar_thick;   // top of the arms' top bars, where the rails start
 
 function arm_x_lo(side) = side * arm_offset - arm_width / 2;
@@ -88,14 +88,22 @@ module at(q, dir) {
 // One arm, worn rail up: wraps the pod and carries a dovetail rail along its
 // top bar. side = -1 is the left arm, 1 the right. Worn upside down, an arm
 // moves to the other side and its rail runs under the pod. bow = spine_bow
-// gives the shape as printed; bow = 0 gives the shape on the pod.
+// gives the shape as printed; bow = 0 gives the shape on the pod. A test arm
+// has its fit_offset engraved on top of the rail, where the mount's groove
+// does not touch it.
 module arm(side, bow = 0) {
     x_lo = arm_x_lo(side);
     swept(x_lo, x_lo + arm_width) arm_2d(c, bow);
     // The rail turns with the top bar, about the pivot at the arm's middle.
     p = [swept_y(pivot[0], side * arm_offset), pivot[1]];
     translate([side * arm_offset, p[0], p[1]]) rotate([-bow_angle(bow), 0, 0]) translate([0, -p[0], -p[1]])
-        extrude_x(arm_width) at([rail_y, z_top], [0, 1]) rail_2d();
+        difference() {
+            extrude_x(arm_width) at([rail_y, z_top], [0, 1]) rail_2d();
+            if (fit_offset != 0)
+                translate([0, rail_y, z_top + dt_height - 0.6]) linear_extrude(1)
+                    text(str(fit_offset), size = 7, font = "Liberation Sans:style=Bold",
+                         halign = "center", valign = "center");
+        }
 }
 
 // Both arms, worn rail up.
