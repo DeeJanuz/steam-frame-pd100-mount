@@ -1,6 +1,6 @@
 # Steam Frame PD100 Mount
 
-3D-printable mounts that hold a BoboVR PD100 (the PD100 dock with a B100 battery) on the rear battery pod of a Valve Steam Frame. Both mounts slide onto one pair of clip-on arms that wrap around the pod from the inside:
+3D-printable mounts that hold a BoboVR PD100 (the PD100 dock with a B100 battery) on the rear battery pod of a Valve Steam Frame. Each mount slides onto a dovetail key on a clip that wraps around the pod and leaves room for the rear cushion:
 
 - **Under mount:** hangs the PD100 below and behind the pod. It suits fast-paced games, since there is less movement low on the head.
 - **Over mount:** lays the PD100 over the top of the pod at a flat angle. Very little sticks out behind your head, so you can lean back against a headrest.
@@ -9,13 +9,18 @@
 |---|---|
 | ![Under mount, section through the middle of the pod with the head to the right](images/under_side.png) | ![Over mount, section through the middle of the pod with the head to the right](images/over_side.png) |
 
-Sections through one arm, with the head to the right. The pod is gray, the arm is blue, the mount is orange, and the PD100 is shown as a yellow block.
+Sections through the middle of the pod, with the head to the right. The pod is gray, the clip is blue, the mount is orange, and the PD100 is shown as a yellow block. The clip is drawn as printed, so its spine overlaps the pod.
 
-## How the arms work
+## How the clip works
 
-Each arm wraps the whole pod. A 1.65 mm spine lies flat against the side of the pod that faces your head. Bars cross the pod's top and bottom edges, and a lip on each bar reaches over the pod's outer shell: a 7.5 mm lip on the bar that carries the rail, and a 5.0 mm lip on the other bar. Only the lips sit on the back of the pod, reaching at most 1.7 mm behind it, and the mount rides on dovetail rails along the pod's top or bottom edge.
+The clip is a remix of [SpanishPotato's Steam Frame back clip](https://www.patreon.com/SpanishPotato/posts/steam-frame-back-171534740), whose file is in `cad/ref/SteamFrameBackClip.stl`. Only its attachment is changed: its two slots are filled in, and our 30 mm dovetail key takes the place of one of them. Everything else is as in that file:
 
-Each arm is printed with its spine bowed slightly toward the pod, which spreads the bars apart so the lips can pass over the pod's edges. Once the arm is on, the pod presses the spine flat. That pulls the bars closed and holds the lips against the outer shell, so the arm stays tight without rattling.
+- A cap with a long lip hooks over the pod's top edge.
+- A thin spine runs down the side of the pod that faces your head. It has two windows, and a slit under the cap lets it flex.
+- At the bottom, a block with a short lip hooks only the outer shell's bottom edge. Legs at the clip's ends join it to the spine. In the middle, the head side of the pod's bottom edge stays free, so the rear cushion can go back on.
+- Three small pegs face the pod from the spine and legs.
+
+There are two versions. `clip_over` has the key on top of the cap for the over mount, and `clip_under` has it under the bottom block for the under mount. Each mount slides onto its key from the side.
 
 ## What you need
 
@@ -26,57 +31,54 @@ Each arm is printed with its spine bowed slightly toward the pod, which spreads 
 
 ## Parts
 
-![Both arms and both mounts, as they sit on the print bed](images/parts.png)
+![Both clips and both mounts, as they sit on the print bed](images/parts.png)
 
 | File | Quantity | Notes |
 |---|---|---|
-| `stl/arm_left.stl` | 1 | Wraps the pod and carries a dovetail rail |
-| `stl/arm_right.stl` | 1 | Mirror image of the left arm |
+| `stl/clip_under.stl` | 1 | Clip with the key underneath, for the under setup |
+| `stl/clip_over.stl` | 1 | Clip with the key on top, for the over setup |
 | `stl/under_mount.stl` | 1 | For the under setup |
 | `stl/over_mount.stl` | 1 | For the over setup |
 
-Print both arms and whichever mounts you want. The same arms work with either mount.
+Print the clip and mount for the setup you want, or both pairs.
 
 ## Printing
 
-- The STL files are already oriented. Every part prints on its side with no supports, so the layers run in the direction that carries the battery's weight and the arms' flex.
-- PETG is recommended. PLA can soften over time from body heat and a warm battery, and each arm's spine stays slightly bent while it is on the pod.
-- The arms print 15 mm tall and the mounts print 55 mm tall.
-- As solid plastic, each arm is about 4.7 cm³, the under mount about 23 cm³, and the over mount about 14 cm³. Your slicer will report the actual weight for your infill.
-- Consider printing one arm first to check the fit before printing the rest.
+- The STL files are already oriented.
+- The clips print upright like the original file, 100 mm tall: `clip_over` stands on its bottom block and `clip_under` on its key. They need supports under the end bars at the bottom, under the tip of the long lip, and under the cap. If supports end up in the slit under the cap, clear them out completely, since the spine flexes there.
+- The mounts print on their side with no supports, 55 mm tall, so the layers run in the direction that carries the battery's weight.
+- PETG is recommended. PLA can soften over time from body heat and a warm battery.
+- As solid plastic, each clip is about 11.5 cm³, the under mount about 26 cm³, and the over mount about 14 cm³. Your slicer will report the actual weight for your infill.
 
 ## Assembly
 
-### Fitting the arms
+### Fitting the clip
 
-1. Turn the arms so their rails are on the edge you want: the bottom for the under setup, the top for the over setup. With the rails on top, the left arm goes on the left side of the pod (as seen from behind). Turning an arm over moves it to the other side, so with the rails on the bottom, the left arm goes on the right.
-2. With the spine against the side of the pod that faces your head, hook the arm's long lip over the pod's edge first. That is the edge with the rail.
-3. Press the other end of the arm toward the pod until the short lip snaps over the opposite edge. The spine flattens against the pod as it goes on.
-4. Slide the arm along the pod until it is centered about 18 mm to the left or right of the pod's center. Fit the other arm the same way on the other side.
-
-To take an arm off, pull its short lip away from the outer shell and swing that end of the arm away from the pod.
+1. With the spine against the side of the pod that faces your head, hook the cap's long lip over the pod's top edge.
+2. Press the bottom of the clip toward the pod until the short lip snaps over the outer shell's bottom edge.
+3. Center the clip on the pod.
 
 ### Under setup
 
-1. Fit the arms with their rails along the pod's bottom edge.
-2. Slide the under mount onto both rails from one side until it is centered. Its upper part sits just behind the pod's outer shell.
+1. Fit `clip_under`.
+2. Slide the under mount onto the key under the clip from one side until it is centered. Its upper part sits just behind the pod's outer shell.
 3. Stick the PD100 to the mount's angled face with 3M Command strips. The PD100's flat bottom goes against the mount, with the display edge toward the pod.
 
 ### Over setup
 
-1. Fit the arms with their rails along the pod's top edge.
-2. Slide the over mount onto both rails from one side until it is centered.
+1. Fit `clip_over`.
+2. Slide the over mount onto the key on top of the clip from one side until it is centered.
 3. Stick the PD100 to the platform with Command strips, with its display edge at the back of the platform.
 
-The dovetail fit is tight on purpose so the mount stays put by friction. If a mount will not slide on, lightly sand the sides of the rails, or increase `dt_gap` in `cad/common.scad` and reprint the mount.
+The dovetail fit is tight on purpose so the mount stays put by friction. If a mount will not slide on, lightly sand the sides of the key, or increase `dt_gap` in `cad/common.scad` and reprint the mount.
 
 ## Fit and customizing
 
-The pod measurements come from calipers on one Steam Frame. The arms' size was set with test prints: with each bar set 2.2 mm into the pod's edge on paper, the arms fit well, while 1.2 mm left them loose. If your arms are loose or too tight, change `rim_clearance` (a 1 mm change per bar changes the height between the bars by 2 mm). The short lip was then lengthened from 3.8 to 5.0 mm because the arms slipped off too easily. That longer lip has not been printed yet. The main numbers:
+The clip's fit is the original file's and has not been changed. The pod measurements come from calipers on one Steam Frame and place the mounts and the assembly views. The main numbers:
 
 - The pod's outer shell is 87.0 mm tall at the seam, and the part that faces your head is 84.5 mm tall.
 - The pod is 12.0 mm thick at the middle of its top and bottom edges, and the outer shell is about 6.5 mm of that.
-- The outer shell bulges about 1.6 mm at mid-height. The long lip leans out 1 mm at its tip to clear it.
+- The outer shell bulges about 1.6 mm at mid-height.
 - Seen from above, the pod curves with a radius of about 117.5 mm.
 
 The design is written in OpenSCAD. Settings you are most likely to change:
@@ -86,13 +88,8 @@ The design is written in OpenSCAD. Settings you are most likely to change:
 | `cad/pod_dims.scad` | all values | Pod measurements |
 | `cad/common.scad` | `curve_radius` | Curve of the pod seen from above |
 | `cad/common.scad` | `dt_gap` | Dovetail clearance per face |
-| `cad/common.scad` | `mount_width`, `arm_width`, `arm_offset` | Mount width, arm width, and arm spacing |
-| `cad/arm_profile.scad` | `rim_clearance` | Room between each bar and the pod's edge. Negative values squeeze the pod (-2.2 mm by default, which fit well in test prints). |
-| `cad/arm_profile.scad` | `fit_offset` | For test arms: changes the height between an arm's bars by this many mm, split between the two bars. Negative is tighter. A nonzero value is engraved on top of the rail. |
-| `cad/arm_profile.scad` | `spine_bow` | How far the spine bows toward the pod as printed (3.6 mm by default). More bow makes the arms easier to fit and grip harder. |
-| `cad/arm_profile.scad` | `lip_len` | How far the long and short lips reach over the outer shell (7.5 and 5.0 mm by default) |
-| `cad/arm_profile.scad` | `lip_root`, `lip_tip`, `lip_lean` | Each lip's thickness at its root and tip, and how far its tip leans out |
-| `cad/arm_profile.scad` | `spine_thick`, `spine_gap` | Spine thickness (1.65 mm by default), and its clearance to the pod once flat |
+| `cad/common.scad` | `mount_width` | Mount width (55 mm by default) |
+| `cad/common.scad` | `key_len` | Length of the key on the clip (30 mm by default) |
 | `cad/under.scad` | `under_tilt` | Angle of the under mount's face, from vertical (30 by default) |
 | `cad/under.scad` | `corner_below` | How far below the pod the PD100's front corner may reach. This is the part that can touch your neck when you look up. |
 | `cad/over.scad` | `over_tilt` | Angle of the over mount's platform, from vertical (60 by default) |
@@ -104,19 +101,13 @@ The design is written in OpenSCAD. Settings you are most likely to change:
 Use a recent OpenSCAD development snapshot. From the repository folder:
 
 ```sh
-openscad -D 'part="arm_left"'    -D print=true -o stl/arm_left.stl    cad/arms.scad
-openscad -D 'part="arm_right"'   -D print=true -o stl/arm_right.stl   cad/arms.scad
+openscad -D 'part="clip_under"'  -D print=true -o stl/clip_under.stl  cad/clip.scad
+openscad -D 'part="clip_over"'   -D print=true -o stl/clip_over.stl   cad/clip.scad
 openscad -D 'part="under_mount"' -D print=true -o stl/under_mount.stl cad/under.scad
 openscad -D 'part="over_mount"'  -D print=true -o stl/over_mount.stl  cad/over.scad
 ```
 
-To build test arms in other sizes, add a fit offset, for example:
-
-```sh
-openscad -D 'part="arm_left"' -D print=true -D fit_offset=-2 -o stl/arm_left_fit-2.stl cad/arms.scad
-```
-
-Opening `cad/under.scad` or `cad/over.scad` in OpenSCAD without any settings shows the assembly with the pod and a block the size of the PD100. Opening `cad/arms.scad` shows the arms on the pod next to the arms as printed.
+Opening `cad/under.scad` or `cad/over.scad` in OpenSCAD without any settings shows the assembly with the pod and a block the size of the PD100. Opening `cad/clip.scad` shows the clip on the pod with both keys.
 
 ## Disclaimer
 
@@ -124,4 +115,4 @@ This project is not affiliated with Valve or BoboVR. It holds a lithium battery 
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE). The MIT license does not cover SpanishPotato's clip: `cad/ref/SteamFrameBackClip.stl` and the clip STLs built from it (`stl/clip_over.stl` and `stl/clip_under.stl`). See the [original post](https://www.patreon.com/SpanishPotato/posts/steam-frame-back-171534740) for its terms.

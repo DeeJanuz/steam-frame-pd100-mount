@@ -1,11 +1,11 @@
-// Shared settings and helpers for the Steam Frame PD100 mounts.
-// Every part prints on its side, so the layers lie in the plane that carries
-// the PD100's weight and the arms' flex. Axes as in pod_dims.scad.
-include <arm_profile.scad>
+// Shared settings and helpers for the Steam Frame PD100 mounts. Every mount
+// prints on its side, so the layers lie in the plane that carries the PD100's
+// weight. Axes as in pod_dims.scad.
+include <pod_dims.scad>
 
 part     = "none";
 explode  = 0;          // assembly views: slide the mount out along X
-print    = false;      // true: lay the chosen part on its side for printing
+print    = false;      // true: turn the chosen part to its print orientation
 pod_view = pod_width;  // assembly views: how much of the pod's width to draw
 
 curve_radius  = 117.5;  // pod's curve seen from above (between the R110 and R125 test gauges)
@@ -16,39 +16,42 @@ pd_up     = 75;   // along the mount's face
 pd_thick  = 35;
 
 mount_width = 55;
-arm_width   = 15;
-arm_offset  = mount_width / 2 - arm_width / 2 - 2;  // arms sit just inside the mount's ends
 mount_wall  = 3;      // material around the groove in a mount
 plate_thick = 3;      // platform thickness at its tip
 
-dt_root    = 10;      // dovetail rail width at its base
-dt_tip     = 14;      // rail width at its top
+dt_root    = 10;      // dovetail key width at its base
+dt_tip     = 14;      // key width at its top
 dt_height  = 5;
 dt_gap     = 0.05;    // clearance per face in a mount's groove; starts tight, open up if needed
 dt_lead_in = 2;       // groove flares open over this length at each end of a mount
 
-c     = bar_clearance;
-z_top = z_bar(c) + bar_thick;   // top of the arms' top bars, where the rails start
+// The clip is ref/SteamFrameBackClip.stl with its two slots replaced by our
+// key. In that file X runs through the pod from the head side, Y across it,
+// and Z up. These place it on the pod:
+clip_file = "ref/SteamFrameBackClip.stl";
+clip_mid  = 29.5;    // file Y at the clip's middle
+clip_y0   = 17.4;    // file X of the top lip's inner face, which sits on the pod's outer face
+clip_z0   = 47.3;    // file Z halfway between the cap and the bottom block, at the seam
+clip_back_y = clip_y0 - 19.31;   // rearmost point of the clip: the lips at its middle
 
-function arm_x_lo(side) = side * arm_offset - arm_width / 2;
+// Keys, as [Y of the centerline, Z of the base]: one on top of the cap for the
+// over mount and one under the bottom block for the under mount, each where
+// the file has its slot. Both run straight along X, key_len long.
+key_len = 30;
+key_top = [clip_y0 - 8.8,   95.0 - clip_z0];   // points up
+key_bot = [clip_y0 - 14.42, 0 - clip_z0];      // points down
 
-// Each rail runs straight along the pod's width while its arm's bar curves away
-// from it. Both rails share one line, centered on the flat top of the bars,
-// between their rear edge at the arms' outer ends and their front edge at the
-// inner ends.
-function swept_y(y, x) = curve_radius - sqrt((curve_radius - y) ^ 2 - x ^ 2);
-bar_rear  = swept_y(-lip_root[0] + edge_chamfer, arm_offset + arm_width / 2);
-bar_front = swept_y(y_spine_out - edge_chamfer, arm_offset - arm_width / 2);
-rail_y    = (bar_rear + bar_front) / 2;
-assert(bar_front - bar_rear >= dt_root, "rail base overhangs the curved bars; narrow the arms");
+// The file's slots, in its (X, Z) plane with some overlap into the walls.
+top_slot = [[4.0, 91.3], [10.0, 91.3], [10.0, 95.2], [4.0, 95.2]];
+bot_slot = [[11.4, 0.01], [17.4, 0.01], [17.4, 3.7], [11.4, 3.7]];   // stops just above the block's underside, which a fill flush with it would leave non-manifold
 
 // The groove's outer wall leans with the dovetail's flank.
 flank_dy = (dt_tip - dt_root) / 2;
-// Front of a mount (toward the head) at the rail's base and at its tip.
-y_front_base = rail_y + dt_root / 2 + dt_gap + mount_wall * sqrt(1 + (flank_dy / dt_height) ^ 2);
-y_front_tip  = y_front_base + flank_dy;
-// Rear of a mount, level with the rail's tip.
-y_rear_tip   = rail_y - dt_tip / 2 - dt_gap - mount_wall;
+// Front of a mount (toward the head) at the key's base and at its tip.
+function y_front_base(key) = key[0] + dt_root / 2 + dt_gap + mount_wall * sqrt(1 + (flank_dy / dt_height) ^ 2);
+function y_front_tip(key)  = y_front_base(key) + flank_dy;
+// Rear of a mount, level with the key's tip.
+function y_rear_tip(key)   = key[0] - dt_tip / 2 - dt_gap - mount_wall;
 
 // Extrude a (Y, Z) profile along X, centered.
 module extrude_x(len) {
@@ -68,7 +71,7 @@ module swept(x_lo, x_hi) {
 }
 
 // Male dovetail with its base on the X axis, pointing +Y. The base runs 1 mm
-// below the axis so it stays buried in an arm's bar when the bar turns.
+// below the axis so it stays buried in the part it stands on.
 module rail_2d() {
     polygon([[-dt_root / 2, -1], [dt_root / 2, -1],
              [dt_tip / 2, dt_height], [-dt_tip / 2, dt_height]]);
@@ -85,41 +88,48 @@ module at(q, dir) {
     translate(q) rotate(atan2(dir[1], dir[0]) - 90) children();
 }
 
-// One arm, worn rail up: wraps the pod and carries a dovetail rail along its
-// top bar. side = -1 is the left arm, 1 the right. Worn upside down, an arm
-// moves to the other side and its rail runs under the pod. bow = spine_bow
-// gives the shape as printed; bow = 0 gives the shape on the pod. A test arm
-// has its fit_offset engraved on top of the rail, where the mount's groove
-// does not touch it.
-module arm(side, bow = 0) {
-    x_lo = arm_x_lo(side);
-    swept(x_lo, x_lo + arm_width) arm_2d(c, bow);
-    // The rail turns with the top bar, about the pivot at the arm's middle.
-    p = [swept_y(pivot[0], side * arm_offset), pivot[1]];
-    translate([side * arm_offset, p[0], p[1]]) rotate([-bow_angle(bow), 0, 0]) translate([0, -p[0], -p[1]])
-        difference() {
-            extrude_x(arm_width) at([rail_y, z_top], [0, 1]) rail_2d();
-            if (fit_offset != 0)
-                translate([0, rail_y, z_top + dt_height - 0.6]) linear_extrude(1)
-                    text(str(fit_offset), size = 7, font = "Liberation Sans:style=Bold",
-                         halign = "center", valign = "center");
-        }
+// Move children from the clip file's axes onto the pod.
+module clip_file_to_pod() {
+    rotate([0, 0, -90]) translate([-clip_y0, -clip_mid, -clip_z0]) children();
 }
 
-// Both arms, worn rail up.
-module arms(bow = 0) { for (side = [-1, 1]) arm(side, bow); }
+// Fill a slot, given in the file's (X, Z) plane, over the length of the part
+// around it: everything in the file inside box, closed up.
+module fill_slot(slot, box) {
+    intersection() {
+        translate([0, 70, 0]) rotate([90, 0, 0]) linear_extrude(80) polygon(slot);
+        hull() intersection() {
+            import(clip_file);
+            translate(box[0]) cube(box[1]);
+        }
+    }
+}
 
-// Extrude a mount's (Y, Z) profile along X and cut the groove for the arms'
-// rails, whose base is at height zb and which point up (s = 1) or down (s = -1).
-// The groove flares at both ends so the tight fit starts onto the rail easily.
-module mount_body(zb, s) {
+// The clip on the pod, with both slots filled and a key on top of the cap
+// (top), under the bottom block (bottom), or both.
+module clip(top = true, bottom = true) {
+    clip_file_to_pod() {
+        import(clip_file);
+        fill_slot(top_slot, [[0, 0, 91.3], [20, 60, 5]]);
+        fill_slot(bot_slot, [[9, 0, -1], [11, 60, 4.7]]);
+    }
+    extrude_x(key_len) {
+        if (top) at(key_top, [0, 1]) rail_2d();
+        if (bottom) at(key_bot, [0, -1]) rail_2d();
+    }
+}
+
+// Extrude a mount's (Y, Z) profile along X and cut the groove for a key at
+// [Y, Z of its base] that points up (s = 1) or down (s = -1). The groove
+// flares at both ends so the tight fit starts onto the key easily.
+module mount_body(key, s) {
     difference() {
         extrude_x(mount_width) difference() {
             children();
-            at([rail_y, zb], [0, s]) groove_2d(dt_gap);
+            at(key, [0, s]) groove_2d(dt_gap);
         }
         for (m = [0, 1]) mirror([m, 0, 0])
-            translate([mount_width / 2 - dt_lead_in, rail_y, zb]) rotate([90, 0, 90])
+            translate([mount_width / 2 - dt_lead_in, key[0], key[1]]) rotate([90, 0, 90])
                 linear_extrude(dt_lead_in + 0.01, scale = 1.06)
                     rotate(s > 0 ? 0 : 180) groove_2d(dt_gap - 0.02);
     }
