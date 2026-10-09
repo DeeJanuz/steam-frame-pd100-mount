@@ -119,6 +119,21 @@ module clip(top = true, bottom = true) {
     }
 }
 
+// The same clip with its outline changed by ref/reshape.py, as seen from the
+// head side. wide_top is upside down: as wide at the cap as the original is at
+// the bottom, and as narrow at the bottom as the original's cap. straight is
+// as wide as the original's bottom all the way up. The files are in pod axes
+// with both slots already filled. Their wide caps carry a key as long as the
+// mount.
+clip_wide_file     = "ref/SteamFrameBackClip_wide_top.stl";
+clip_straight_file = "ref/SteamFrameBackClip_straight.stl";
+key_len_wide       = mount_width;
+
+module clip_reshaped(file) {
+    import(file);
+    extrude_x(key_len_wide) at(key_top, [0, 1]) rail_2d();
+}
+
 // Extrude a mount's (Y, Z) profile along X and cut the groove for a key at
 // [Y, Z of its base] that points up (s = 1) or down (s = -1). The groove
 // flares at both ends so the tight fit starts onto the key easily.
